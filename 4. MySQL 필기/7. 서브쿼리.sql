@@ -82,16 +82,16 @@ WHERE job_id = (SELECT job_id
 -- 메인쿼리에는 우변에 값리스트가 올 수 있는 다중행 비교연산자 사용해야함.
 -- 다중행 비교연산자 : in(=,or), not in(<>,and), any(or), all(and)
 -- =any		: (=, or)		(==) in	: (=, or)
--- >any		: (>, or)
--- >=any	: (>=, or)
--- <any		: (<, or)
--- <=any	: (<=, or)
--- <>any	: (<>, or)
--- =all		: (=, and)
--- >all		: (>, and)
--- >=all	: (>=, and)
--- <all		: (<, and)
--- <=all	: (<=, and)
+-- >any		: (>, or)	-> 최소값보다 크면 된다.
+-- >=any	: (>=, or)	-> 최소값보다 크거나 같으면 된다.
+-- <any		: (<, or)   -> 최대값보다 작으면 된다.
+-- <=any	: (<=, or)	-> 최대값보다 작거나 같으면 된다.
+-- <>any	: (<>, or)	-> 단일값인 경우 의미가 있고, 다중값인 경우에는 의미가 없음.
+-- =all		: (=, and)	-> 단일값인 경우 의미가 있고, 다중값인 경우에는 의미가 없음.
+-- >all		: (>, and)	-> 최대값보다 크면 된다.
+-- >=all	: (>=, and)	-> 최대값보다 크거나 같으면 된다.
+-- <all		: (<, and)	-> 최소값보다 작으면 된다.
+-- <=all	: (<=, and)	-> 최소값보다 작거나 같으면 된다.
 -- <>all	: (<>, and)		(==) not in : (<>, and)
 
 -- 다중행 비교연산자 in이 사용된 다중행 서브쿼리 예제1
@@ -104,5 +104,90 @@ AND department_id IN (SELECT department_id
 					  FROM employees 
 					  WHERE employee_id IN (174, 141)) 
 AND employee_id NOT IN(174, 141);
-1
 
+-- 다중행 비교연산자 any가 사용된 다중행 서브쿼리 예제2
+SELECT employee_id, last_name, job_id, salary
+FROM employees
+WHERE salary <ANY (SELECT salary
+                   FROM employees
+                   WHERE job_id = 'IT_PROG')
+AND job_id <> 'IT_PROG';
+
+-- 다중행 비교연산자 all이 사용된 다중행 서브쿼리 예제3
+SELECT employee_id, last_name, job_id, salary
+FROM employees
+WHERE salary <ALL (SELECT salary 
+                   FROM employees
+                   WHERE job_id = 'IT_PROG')
+AND job_id <> 'IT_PROG';
+
+-- 다중행 서브쿼리 + 다중컬럼 서브쿼리 예제
+SELECT employee_id, first_name, department_id, salary
+FROM employees
+WHERE (department_id, salary) IN (SELECT department_id, min(salary) 
+                                  FROM employees
+                                  GROUP BY department_id)
+ORDER BY department_id;
+
+-- employees 테이블에서 자기 자신이 매니저가 아닌 최하위 직원을 출력하시오.
+-- 결과가 나오지 않는 원인은?
+-- 다중행 서브쿼리로부터 반환되는 값리스트에 null값이 포함된 경우
+-- (1) or의 성격을 가지는 다중행 비교연산자 사용 -> 메인 쿼리 결과 정상 출력됨.
+-- (2) and의 성격을 가지는 다중행 비교연산자 사용 -> 메인 쿼리 결과도 null이다!
+SELECT last_name
+FROM employees
+WHERE employee_id NOT IN (SELECT manager_id
+                          FROM employees
+                          WHERE manager_id is not null);
+                          
+-- <연습문제>
+-- 1. 
+SELECT last_name, hire_date
+FROM employees
+WHERE department_id = (SELECT department_id
+					   FROM employees
+					   WHERE last_name = 'Abel')
+AND last_name <> 'Abel';
+
+-- 2.
+SELECT employee_id, last_name, salary
+FROM employees
+WHERE salary >= (SELECT AVG(salary)
+ 	             FROM employees)
+ORDER BY salary;
+
+-- 3.
+SELECT employee_id, last_name
+FROM employees
+WHERE department_id IN (SELECT department_id
+						FROM employees
+						WHERE last_name like '%u%');
+
+-- 4. 
+SELECT employee_id, last_name, department_id, job_id
+FROM employees
+WHERE department_id IN (SELECT department_id
+                        FROM departments
+                        WHERE location_id = 1700);
+
+-- 5. 
+SELECT employee_id, last_name, salary
+FROM employees
+WHERE department_id IN (SELECT department_id
+                        FROM employees
+                        WHERE last_name like '%u%')
+AND salary >= (SELECT AVG(salary)
+               FROM employees);
+
+-- 6. 
+SELECT employee_id, last_name
+FROM employees
+WHERE employee_id IN (select manager_id
+					  from employees);
+
+-- 7. 
+SELECT department_id, department_name
+FROM departments
+WHERE department_id NOT IN (select department_id
+                            from employees
+                            where department_id is not null);
