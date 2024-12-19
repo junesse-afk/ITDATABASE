@@ -165,3 +165,152 @@ where table_name = 'employees';
 select *
 from key_column_usage
 where table_name = 'test4';
+
+-- create table + 서브쿼리 활용 예제
+-- 기존 테이블을 기반으로 복사본의 테이블이 생성됨.(단, 제약조건은 not null만 복사됨)
+-- 테이블 백업 또는 테스트용 테이블 생성 시 활용됨.
+create table dept80
+as select employee_id, last_name, salary*12 as annsal, hire_date
+   from employees
+   where department_id = 80;
+   
+desc dept80;
+select *
+from dept80;
+
+-- 9-2. 테이블 수정(alter table)
+-- alter table 테이블명 add ------; : 컬럼 추가, 제약조건 추가(pk, fk, uk, ck)
+-- alter table 테이블명 modify ---; : 컬럼 수정, 제약조건 추가/삭제(not null)
+-- alter table 테이블명 drop -----; : 컬럼 삭제, 제약조건 삭제(pk, fk, uk, ck)
+-- alter table 테이블명 rename ---; : 컬럼명 수정
+
+-- 1) 컬럼 추가
+-- 새롭게 추가된 컬럼은 기본적으로 마지막 컬럼으로 추가됨.
+-- 데이터는 자동으로 null값 저장됨.
+alter table dept80
+add job_id varchar(30);
+
+-- default값이 있는 컬럼은 자동으로 default값 저장됨.
+alter table dept80
+add email varchar(25) default '미입력';
+
+-- 테이블 가장 앞에 컬럼 추가하는 방법
+alter table dept80
+add emp_no int first;
+
+-- 특정 컬럼 뒤에 컬럼 추가하는 방법
+alter table dept80
+add salary int after last_name;
+
+-- 컬럼 추가 시 not null 제약조건이 선언된 경우 데이터타입별 저장되는 데이터 확인
+alter table dept80
+add phone_number varchar(30) not null;	-- 자동으로 null값 대신 공백 삽입
+
+alter table dept80
+add age int not null;					-- 자동으로 null값 대신 0 삽입
+
+SHOW VARIABLES LIKE 'sql_mode';
+SET sql_mode = 'no_zero_date';
+
+alter table dept80
+add join_date date not null; 	-- 자동으로 null값 대신 0000-00-00 삽입
+
+select *
+from dept80;
+
+-- 2) 컬럼 수정(데이터타입, 컬럼사이즈, default값, not null 제약조건)
+desc dept80;
+
+-- last_name(varchar(25), not null) -> (varchar(15))
+alter table dept80
+modify last_name varchar(15);
+
+-- phone_number(varchar(30), not null) -> (char(13), not null)
+alter table dept80
+modify phone_number char(13) not null;
+
+-- email(varchar(25), default : '미입력') -> (varchar(25), default : '미정')
+alter table dept80
+modify email varchar(25) default '미정';
+
+insert into dept80
+values (null, 180, 'Hong', 3000, 80000, '2024-12-10', null, 
+        default, '010-1111-1111', 25);
+
+select *
+from dept80;
+
+-- 3) 컬럼 삭제
+alter table dept80
+drop column annsal;
+
+select *
+from dept80;
+
+-- 4) 제약조건 추가
+-- [문법1] alter table 테이블명 add --; : pk, uk, ck, fk
+alter table dept80
+add primary key(employee_id);
+
+alter table dept80
+add unique(emp_no);
+
+alter table dept80
+add check(salary > 0);
+
+alter table dept80
+add foreign key(employee_id) references employees(employee_id);
+
+-- [문법2] alter table 테이블명 modify --; : not null
+alter table dept80
+modify last_name varchar(15) not null;
+
+desc dept80;
+
+-- 5) 제약조건 삭제
+-- [문법1] alter table 테이블명 drop primary key; : pk
+alter table dept80
+drop primary key;
+
+-- [문법2] alter table 테이블명 drop 제약조건유형 제약조건명; : fk, ck, uk
+use information_schema;
+select *
+from table_constraints
+where table_name = 'dept80';    -- fk제약조건명 : dept80_ibfk_1
+
+use hr;
+alter table dept80
+drop foreign key dept80_ibfk_1;
+
+-- [문법3] alter table 테이블명 modify --; : not null
+alter table dept80
+modify hire_date date null;
+
+desc dept80;
+
+-- 6) 컬럼명 수정
+alter table dept80
+rename column last_name to lname;
+
+desc dept80;
+
+-- [참고] 테이블명 수정
+rename table dept80 to dept90;
+desc dept90;
+
+-- 9-3. 테이블 삭제(drop table)
+-- [문법] drop table 테이블명;
+-- 테이블의 구조와 데이터가 삭제되는 작업
+-- DB로부터 테이블의 존재가 없어짐.
+drop table dept90; 
+select *
+from dept90;		-- 존재하지 않음.
+
+-- 9-4. 테이블 절단(truncate table)
+-- [문법] truncate table 테이블명; (==) delete from 테이블명;
+-- 테이블의 구조는 남고, 테이블의 모든 행이 삭제되는 작업
+truncate table copy_emp;
+
+desc copy_emp;
+select *
+from copy_emp;
