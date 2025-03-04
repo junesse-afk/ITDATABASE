@@ -1,0 +1,13 @@
+<비교연산자>
+- 단일행 비교연산자 : =, >, >=, <, <=, <>, !=
+- 추가 비교연산자 : between, in, like, is null, 
+                           [=, >, >=, <, <=, <>] + any,
+		 [=, >, >=, <, <=, <>] + all
+
+=		<-->	<>, !=
+>, >=		<-->	<, <=
+between A and B	<-->	not between A and B
+in : (=, or)	<-->	not in : (<>, and)
+like		<-->	not like
+is null		<-->	is not null
+

@@ -1,0 +1,9 @@
+<4장 연습문제 풀이>
+1. SELECT employee_id, last_name, salary, 
+          round(salary * 1.155, 0) as "New Salary",
+	  round(salary * 1.155, 0) - salary as "Increase"
+    FROM employees;
+
+2. SELECT last_name, lpad(salary, 15, '$') as salary
+   FROM employees;
+

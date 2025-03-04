@@ -1,0 +1,59 @@
+<단일행함수>
+1. 문자함수 - 1) 대소문자 변환함수 : lower, upper, initcap
+                 - 2) 문자 조작함수 : concat, substr, length, instr,
+                              lpad, rpad, replace, trim
+2. 숫자함수 : round, trunc, mod
+3. 날짜함수 : sysdate, months_between, add_months, 
+                    next_day, last_day, round, trunc
+4. 변환함수
+5. 일반함수
+
+<<문자조작함수>>
+1. concat(expr1, expr2) 
+- 두 인수를 연결해 주는 함수
+- [ex1] concat(first_name, last_name)
+- [ex2] concat(concat(first_name, last_name), job_id)
+
+2. substr(expr1, expr2, expr3)
+- 문자열의 일부분을 반환해 주는 함수
+- expr1 : 반환할 문자열
+- expr2 : 시작위치 -> 음수 :  시작위치를 끝에서 부터 찾아옴.
+- expr3 : 반환할 문자수 -> 생략가능 : 시작위치에서 끝까지 반환함.
+- [ex1] substr(jumin_no, 1, 6) ==> 901223
+- [ex2] substr('010-1234-0907', -4, 4) ==> 0907 
+- [ex3] substr('AC_ACCOUNT', 3) ==>_ACCOUNT
+
+3. length(epxr1)
+- 문자열의 길이(byte)를 반환해 주는 함수
+
+4. instr(expr1, expr2)
+- 문자열(expr1)로부터 특정 문자(expr2)의 첫번째 위치값을 반환하는 함수.
+
+5. lpad(expr1, expr2, expr3) / rpad(expr1, expr2, expr3)
+- 오른쪽 정렬 / 왼쪽 정렬해 주는 함수
+
+6. replace(expr1, expr2, expr3)
+- 문자열(expr1)에서 특정 문자(expr2)를 다른 문자(expr3)로
+  교체해 주는 함수
+
+7. trim(expr1 from expr2)
+- 문자열(expr2)로부터 특정 문자(expr1)가 접두어/접미어에 있다면
+  삭제(절단)해 주는 함수
+- [ex1] trim('H' from 'HelloWorld') ==> elloWorld
+- [ex2] trim('H' from 'HHelloWHorHldHHH') ==> elloWHorHld
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

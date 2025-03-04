@@ -1,0 +1,34 @@
+<Linux OS User>
+1. root(pw : oracle01) - 관리자의 권한을 소유한 계정
+2. oracle(pw : oracle) - /home/oracle 디렉토리 권한
+                                    - /u01/app/oracle 디렉토리 권한
+
+<"ORCL" DB User>
+1. sys(pw : oracle) - sysdba권한(DB 시작/종료 + dba)
+2. system(pw : oracle) - dba권한
+3. hr(pw : hr)
+
+<DB 시작 및 접속하기>
+1. Virtual Box 실행
+2. 가상 PC 시작
+3. Linux 로그인 : OS User - oracle / PW - oracle
+4. 바탕화면에서 오른쪽 마우스 클릭 - 터미널 열기
+5. 리스너 활성화				$] lsnrctl  start
+6. sqlplus(TUI) 프로그램 실행		$] sqlplus /nolog
+7. DB에 sys 사용자로 로그인		SQL> conn sys/oracle as sysdba
+8. DB 시작				SQL> startup
+9. sql developer(GUI) 프로그램 실행 : 상단 [프로그램] - [개발] - [sqldeveloper]
+10. DB에 hr 사용자로 로그인
+
+[참고] hr 사용자 패스워드 변경하기
+alter user hr
+identified by hr;
+
+
+
+
+
+
+		
+
+
