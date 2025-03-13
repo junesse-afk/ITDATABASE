@@ -1,0 +1,15 @@
+<5장 연습문제 풀이>
+1. select job_id, 
+            max(salary) as "Maximum",
+            min(salary) as "Minimum",
+            sum(salary) as "Sum",
+            avg(salary) as "Average"
+    from employees
+    group by job_id;
+
+2. select manager_id, min(salary)
+   from employees
+   where manager_id is not null
+   group by manager_id
+   having min(salary) >= 6000
+   order by min(salary) desc;

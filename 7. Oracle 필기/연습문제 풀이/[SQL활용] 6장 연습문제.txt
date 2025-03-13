@@ -1,0 +1,16 @@
+[SQL활용] 6장 연습문제
+1. 
+SELECT employee_id, last_name
+FROM employees
+WHERE department_id IN (SELECT department_id
+ 			FROM employees
+ 			WHERE last_name like '%u%');
+
+2. 
+SELECT employee_id, last_name, salary
+FROM employees
+WHERE department_id IN (SELECT department_id
+ 			FROM employees
+ 			WHERE last_name like '%u%')
+AND salary > (SELECT AVG(salary)
+	      FROM employees);

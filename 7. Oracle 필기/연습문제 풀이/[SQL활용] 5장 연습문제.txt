@@ -1,0 +1,30 @@
+[SQL활용] 5장. 연습문제 풀이
+
+1.
+SELECT location_id, street_address, city, state_province, country_name 
+FROM locations NATURAL JOIN countries; 
+
+
+2. 
+SELECT e.last_name, e.job_id, e.department_id, d.department_name 
+FROM employees e JOIN departments d 
+ON (e.department_id = d.department_id) 
+JOIN locations l 
+ON (d.location_id = l.location_id) 
+WHERE LOWER(l.city) = 'toronto'; 
+
+
+3. 
+SELECT w.last_name "Employee", w.employee_id "EMP#", 
+       m.last_name "Manager", m.employee_id "Mgr#" 
+FROM employees w LEFT OUTER JOIN employees m 
+ON (w.manager_id = m.employee_id) 
+ORDER BY 2;
+
+
+4.  
+SELECT w.last_name, w.hire_date, m.last_name, m.hire_date 
+FROM employees w JOIN employees m 
+ON (w.manager_id = m.employee_id) 
+WHERE w.hire_date < m.hire_date;
+
